@@ -80,36 +80,35 @@ int main() {
 			Mat imgPadded;
 			Mat grayimg;
 			cvtColor(img, grayimg, COLOR_BGR2GRAY);
-			Mat M(Size(width, height), CV_8UC1);
-			M = 0;
-			Mat K(Size(width, height), CV_8UC1);
-			K = 0;
+			Mat M(Size(width, height), CV_8UC1, Scalar(0));
+			Mat K(Size(width, height), CV_8UC1, Scalar(0));
 			int border = 1;
 		copyMakeBorder(grayimg, imgPadded, border, border, border, border, BORDER_REPLICATE);
 		for (int i = 1; i < imgPadded.rows - 1; i++) { //Starting from 1 to rows-1; Because of padded(instead of matrix(-1,-1))
 			for (int j = 1; j < imgPadded.cols - 1; j++) {
 				int r = i - 1; //i and j are the coordinated in imgPadded(one more pixel at border)
-				int c = j - 1; //r and c are the coordinated of M matrix and original image(unchanged resolution)
+				int co = j - 1; //r and c are the coordinated of M matrix and original image(unchanged resolution)
 				int cL = abs((int)imgPadded.at<uchar>(i, j + 1) - (int)imgPadded.at<uchar>(i, j - 1)) + abs((int)imgPadded.at<uchar>(i - 1, j) - (int)imgPadded.at<uchar>(i, j - 1));
 				int cU = abs((int)imgPadded.at<uchar>(i, j + 1) - (int)imgPadded.at<uchar>(i, j - 1));
 				int cR = abs((int)imgPadded.at<uchar>(i, j + 1) - (int)imgPadded.at<uchar>(i, j - 1)) + abs((int)imgPadded.at<uchar>(i - 1, j) - (int)imgPadded.at<uchar>(i, j + 1));
-				int topLeft = (c == 0 || r == 0) ? cL : (int)M.at<uchar>(r - 1, c - 1) + cL;
-				int topUp = (r == 0) ? cU : (int)M.at<uchar>(r - 1, c) + cU;
-				int topRight = (c >= width - 1 || r == 0) ? cR : (int)M.at<uchar>(r - 1, c + 1) + cR;
-				M.at<uchar>(r, c) = min(topLeft, min(topUp, topRight));
-				if (r == 0) K.at<uchar>(r, c) = 0;
+				int topLeft = ((co == 0 || r == 0) ? cL : ((int)M.at<uchar>(r - 1, co - 1) + cL));
+				int topUp = ((r == 0) ? cU : ((int)M.at<uchar>(r - 1, co) + cU));
+				int topRight = ((co >= width - 1 || r == 0) ? cR : ((int)M.at<uchar>(r - 1, co + 1) + cR));
+				int mini = min(topLeft, min(topUp, topRight));
+				M.at<uchar>(r, co) = min(topLeft, min(topUp, topRight));
+				if (r == 0) K.at<uchar>(r, co) = 0;
 				else {
-					if (c!=0 && topLeft == min(topLeft, min(topUp, topRight))) {
-						K.at<uchar>(r, c) = 1;
+					if (co!=0 && topLeft == min(topLeft, min(topUp, topRight))) {
+						K.at<uchar>(r, co) = 1;
 					}
 					else if (topUp == min(topLeft, min(topUp, topRight))) {
-						K.at<uchar>(r, c) = 2;
+						K.at<uchar>(r, co) = 2;
 					}
 					else {
-						if(c>=width-1)
-							K.at<uchar>(r, c) = 2;
+						if(co>=width-1)
+							K.at<uchar>(r, co) = 2;
 						else {
-							K.at<uchar>(r, c) = 3;
+							K.at<uchar>(r, co) = 3;
 						}
 					}
 				}
@@ -119,8 +118,7 @@ int main() {
 		imshow("M matrix", M);
 		// Find the best seam in the veritical direction
 		// *** WRITE YOUR CODE ***
-		Mat B(Size(width, height), CV_8UC1);
-		B = 0;
+		Mat B(Size(width, height), CV_8UC1, Scalar(0));
 		int row = 0;
 		for (int i = 0; i < width; i++) {
 			if ((int)M.at<uchar>(height - 1, i) < (int)M.at<uchar>(height - 1, row)) row = i;
@@ -145,6 +143,7 @@ int main() {
 			}
 			r--;
 		}
+		reverse(BestSeam.begin(), BestSeam.end());
 		cvWaitKey(1);
 		imshow("Best Seam", B);
 		//copy(BestSeam.begin(), BestSeam.end(), ostream_iterator<int>(cout, " "));
@@ -227,6 +226,7 @@ int main() {
 				}
 				c--;
 			}
+			reverse(BestSeam.begin(), BestSeam.end());
 			cvWaitKey(1);
 			imshow("Best Seam", B);
 			grayimg.release();
@@ -258,6 +258,7 @@ int main() {
 			img.release();
 			img = img_new.clone();
 			img_new.release();
+			BestSeam.clear();
 		}
 		if (c == 100) {
 			// Increase width or insert seam vertically
@@ -281,6 +282,7 @@ int main() {
 			img.release();
 			img = img_new.clone();
 			img_new.release();
+			BestSeam.clear();
 		}
 		if (c == 115) {
 			// Reduce height or delete seam horizontally
@@ -303,6 +305,7 @@ int main() {
 			img.release();
 			img = img_new.clone();
 			img_new.release();
+			BestSeam.clear();
 		}
 		if (c == 119) {
 			// Increase height or insert seam horizontally
@@ -325,6 +328,7 @@ int main() {
 			img.release();
 			img = img_new.clone();
 			img_new.release();
+			BestSeam.clear();
 		}
 		if (c == 27) {
 			break;
