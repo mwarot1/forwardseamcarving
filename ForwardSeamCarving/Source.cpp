@@ -63,18 +63,18 @@ int main() {
 	Size sz = img.size();
 	int height = sz.height;
 	int width = sz.width;
-	int c = cvWaitKey(0);
+	int ca = cvWaitKey(0);
 	// Esc = 27, a = 97, d = 100, s = 115, w =119
-	while (c != 27) {
+	while (ca != 27) {
 		// Looping till get the command 'a', 'd', 'w', 's'
-		while (c != 97 && c != 100 && c != 115 && c != 119 && c != 27) {
-			c = cvWaitKey(0);
+		while (ca != 97 && ca != 100 && ca != 115 && ca != 119 && ca != 27) {
+			ca = cvWaitKey(0);
 		}
 		//Best Seam Matrix 1xheight (contain the row x column that is the best seam)
 		vector<int> BestSeam;
 		// Keyboard command ::: 'a' and 'd' => vertical best seam, 'w' and 's' => horizontal bestseam
 		// 'a' => Reduce width, d => increase width
-		if (c == 97 || c == 100) {
+		if (ca == 97 || ca == 100) {
 			// Construct M matrix and K matrix in the vertical direction
 			// *** WRITE YOUR CODE ***
 			Mat imgPadded;
@@ -155,7 +155,7 @@ int main() {
 		}
 
 		// 'w' => increase height, 's' => reduce height
-		if (c == 115 || c == 119) {
+		if (ca == 115 || ca == 119) {
 			// Construct M matrix and K matrix in the horizontal direction
 			// *** WRITE YOUR CODE ***
 			Mat imgPadded;
@@ -237,7 +237,7 @@ int main() {
 		}
 
 		// Insert or delete the best seam
-		if (c == 97) {
+		if (ca == 97) {
 			// Reduce width or delete seam vertically
 			// Copy the pixels into this image
 			Mat img_new(height, --width, CV_8UC3, Scalar(0, 0, 0));
@@ -260,7 +260,7 @@ int main() {
 			img_new.release();
 			BestSeam.clear();
 		}
-		if (c == 100) {
+		if (ca == 100) {
 			// Increase width or insert seam vertically
 			// Copy the pixels into this image
 			Mat img_new(height, ++width, CV_8UC3, Scalar(0, 0, 0));
@@ -284,7 +284,7 @@ int main() {
 			img_new.release();
 			BestSeam.clear();
 		}
-		if (c == 115) {
+		if (ca == 115) {
 			// Reduce height or delete seam horizontally
 			// Copy the pixels into this image
 			Mat img_new(--height, width, CV_8UC3, Scalar(0, 0, 0));
@@ -307,7 +307,7 @@ int main() {
 			img_new.release();
 			BestSeam.clear();
 		}
-		if (c == 119) {
+		if (ca == 119) {
 			// Increase height or insert seam horizontally
 			// Copy the pixels into this image
 			Mat img_new(++height, width, CV_8UC3, Scalar(0, 0, 0));
@@ -330,9 +330,9 @@ int main() {
 			img_new.release();
 			BestSeam.clear();
 		}
-		if (c == 27) {
+		if (ca == 27) {
 			break;
-			c = cvWaitKey(0);
+			ca = cvWaitKey(0);
 		}
 	}
 	return 0;
