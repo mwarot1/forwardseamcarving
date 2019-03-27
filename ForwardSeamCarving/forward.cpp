@@ -55,10 +55,10 @@ std::string GetMatType(const cv::Mat& mat)
 }
 //Forward Seam Carving
 int main() {
-	Mat img = imread("LS.jpg", IMREAD_COLOR);
+	Mat img = imread("balloon.jpg", IMREAD_COLOR);
 	namedWindow("Landscape", WINDOW_AUTOSIZE);
-	namedWindow("Best Seam", WINDOW_AUTOSIZE);
-	namedWindow("M matrix", WINDOW_AUTOSIZE);
+	//namedWindow("Best Seam", WINDOW_AUTOSIZE);
+	//namedWindow("M matrix", WINDOW_AUTOSIZE);
 	imshow("Landscape", img);
 	Size sz = img.size();
 	int height = sz.height;
@@ -70,6 +70,7 @@ int main() {
 		while (ca != 97 && ca != 100 && ca != 115 && ca != 119 && ca != 27) {
 			ca = cvWaitKey(0);
 		}
+		if (width <= 1 || height <= 1) break;
 		//Best Seam Matrix 1xheight (contain the row x column that is the best seam)
 		vector<int> BestSeam;
 		// Keyboard command ::: 'a' and 'd' => vertical best seam, 'w' and 's' => horizontal bestseam
@@ -94,7 +95,6 @@ int main() {
 				int topLeft = ((co == 0 || r == 0) ? cL : ((int)M.at<uchar>(r - 1, co - 1) + cL));
 				int topUp = ((r == 0) ? cU : ((int)M.at<uchar>(r - 1, co) + cU));
 				int topRight = ((co >= width - 1 || r == 0) ? cR : ((int)M.at<uchar>(r - 1, co + 1) + cR));
-				int mini = min(topLeft, min(topUp, topRight));
 				M.at<uchar>(r, co) = min(topLeft, min(topUp, topRight));
 				if (r == 0) K.at<uchar>(r, co) = 0;
 				else {
@@ -114,8 +114,8 @@ int main() {
 				}
 			}
 		}
-		cvWaitKey(1);
-		imshow("M matrix", M);
+		//cvWaitKey(1);
+		//imshow("M matrix", M);
 		// Find the best seam in the veritical direction
 		// *** WRITE YOUR CODE ***
 		Mat B(Size(width, height), CV_8UC1, Scalar(0));
@@ -144,8 +144,8 @@ int main() {
 			r--;
 		}
 		reverse(BestSeam.begin(), BestSeam.end());
-		cvWaitKey(1);
-		imshow("Best Seam", B);
+		//cvWaitKey(1);
+		//imshow("Best Seam", B);
 		//copy(BestSeam.begin(), BestSeam.end(), ostream_iterator<int>(cout, " "));
 		grayimg.release();
 		imgPadded.release();
@@ -196,8 +196,8 @@ int main() {
 					}
 				}
 			}
-			cvWaitKey(1);
-			imshow("M matrix", M);
+			//cvWaitKey(1);
+			//imshow("M matrix", M);
 			// Find the best seam in the horizontal direction
 			// *** WRITE YOUR CODE ***
 			Mat B(Size(width, height), CV_8UC1);
@@ -227,8 +227,8 @@ int main() {
 				c--;
 			}
 			reverse(BestSeam.begin(), BestSeam.end());
-			cvWaitKey(1);
-			imshow("Best Seam", B);
+			//cvWaitKey(1);
+			//imshow("Best Seam", B);
 			grayimg.release();
 			imgPadded.release();
 			M.release();
@@ -253,6 +253,7 @@ int main() {
 				}
 			}
 			// Show resized image
+			cvWaitKey(1);
 			imshow("Landscape", img_new);
 			// Clone img_new into img for the next loop processing
 			img.release();
@@ -276,7 +277,7 @@ int main() {
 				}
 			}
 			// Show resized image
-			//cvWaitKey(1);
+			cvWaitKey(1);
 			imshow("Landscape", img_new);
 			// Clone img_new into img for the next loop processing
 			img.release();
@@ -300,6 +301,7 @@ int main() {
 				}
 			}
 			// Show resized image
+			cvWaitKey(1);
 			imshow("Landscape", img_new);
 			// Clone img_new into img for the next loop processing
 			img.release();
@@ -323,6 +325,7 @@ int main() {
 				}
 			}
 			// Show resized image
+			cvWaitKey(1);
 			imshow("Landscape", img_new);
 			// Clone img_new into img for the next loop processing
 			img.release();
